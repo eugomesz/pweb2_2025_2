@@ -46,27 +46,42 @@ class AlunoController extends Controller
 
     public function edit(string $id)
     {
-        //
+        $dado = Aluno::findOrFail($id);
+        // dd($dado);
+
+        return view('aluno.form', ['dado' => $dado]);
     }
 
 
     public function update(Request $request, string $id)
     {
-        //
+        //dd($request->all());
+        $request->validate([
+            'nome' => 'required',
+            'cpf' => 'required',
+        ], [
+            'nome.required' => 'O :attribute é obrigatório',
+            'cpf.required' => 'O :attribute é obrigatório',
+        ]);
+
+        Aluno::updateOrCreate(['id' => $id], $request->all());
+
+        return redirect('aluno');
     }
 
 
     public function destroy(string $id)
     {
-        $dado = Aluno::find($id);
+        $dado = Aluno::findOrFail($id);
 
         $dado->delete();
 
         return redirect('aluno');
     }
 
-    public function search(Request $request){
-        if(!empty($request->valor)){
+    public function search(Request $request)
+    {
+        if (!empty($request->valor)) {
             $dados = Aluno::where(
                 $request->tipo,
                 'like',
